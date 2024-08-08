@@ -1,0 +1,68 @@
+<div class="col-auto">
+    <div class="row align-items-start justify-content-center">
+        <div class="col-auto">
+            <a href="{% url 'person_profile' connection.1.id %}">
+            <img src="{{ connection.1.image.url }}" width="64px"/>
+            </a>
+        </div>
+    </div>
+    <div class="row align-items-center justify-content-center">
+        <div class="col-auto">
+            <a href="{% url 'person_profile' connection.1.id %}">{{ connection.1.first_name }} {{ connection.1.last_name }}</a>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <span class="align-middle">{{ connection.2.name }}</span>
+        </div>
+    </div>
+    {% if show_delete_button %}
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deleteConnectionModal_{{ connection.0 }}"></button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if show_delete_button %}
+<div class="modal fade" id="deleteConnectionModal_{{ connection.0 }}" tabindex="-1" aria-labelledby="deleteConnection_{{ connection.0 }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteConnection_{{ connection.0 }}">Delete connection to {{ connection.1.first_name }} {{ connection.1.last_name }}?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'delete_connection_for_person' person.id connection.0 %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <p>Are you sure you want to delete the following connection?</p>
+        </div>
+        <div class="row align-items-start justify-content-center">
+            <div class="col-auto">
+                <a href="{% url 'person_profile' connection.1.id %}">
+                <img src="{{ connection.1.image.url }}" width="64px"/>
+                </a>
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-auto">
+                <a href="{% url 'person_profile' connection.1.id %}">{{ connection.1.first_name }} {{ connection.1.last_name }}</a>
+            </div>
+        </div>
+        <div class="row mb-3 justify-content-center">
+            <div class="col-auto">
+                <span class="align-middle">{{ connection.2.name }}</span>
+            </div>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Delete connection</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.css">
+{% endblock %}
+
+{% block title %}Person - {{ person.first_name }}{% if person.last_name %} {{ person.last_name }}{% endif %} - Dexter{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div>{{ error_message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <img src="{{ person.image.url }}" width="120px"/>
+        </div>
+        <div class="col-auto">
+            <h1>{{ person.first_name }}{% if person.last_name %} {{ person.last_name }}{% endif %}<button class="btn bi-pencil" data-bs-toggle="modal" data-bs-target="#updatePersonDetailsModal"></button></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="row mb-3">
+                <label for="birthday_display" class="col-2 col-form-label">Birthday</label>
+                <div class="col-auto">
+                    <input readonly type="date" class="form-control-plaintext" id="birthday_display" name="birthday_display" value="{% if person.birthday %}{{ person.birthday|date:'Y-m-d' }}{% endif %}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="pronoun_display" class="col-2 col-form-label">Pronouns</label>
+                <div class="col-auto">
+                    <input readonly type="text" class="form-control-plaintext" id="pronoun_display" name="pronoun_display" value="{% if person.pronouns %}{{ person.pronouns }}{% endif %}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="gender_display" class="col-2 col-form-label">Gender</label>
+                <div class="col-auto">
+                    <input readonly type="text" class="form-control-plaintext" id="gender_display" name="gender_display" value="{% if person.gender %}{{ person.gender }}{% endif %}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="notes_display" class="col-2 col-form-label">Notes</label>
+                <div class="col-auto">
+                    <textarea readonly class="form-control-plaintext" id="notes_display" name="notes_display" placeholder="Click 'Edit' above to add some notes!">{% if person.notes %}{{ person.notes }}{% endif %}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Tags<button class="btn bi-pencil" data-bs-toggle="modal" data-bs-target="#addTagsModal"></button></h3>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-auto">
+            {% if person.persontag_set.all|length %}
+            {% for tag in person.persontag_set.all %}
+            <a href="{% url 'search_by_tag' %}?tag_ids={{ tag.tag.id | urlencode }}"><span class="badge rounded-pill text-bg-secondary">{{ tag.tag.name }}</span></a>
+            {% endfor %}
+            {% else %}
+            No tags
+            {% endif %}
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="row">
+            <div class="col">
+                <h3>Contact Information</h3>
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="col">
+                <h4>E-mail Addresses<button type="button" class="btn bi-plus-lg" data-bs-toggle="modal" data-bs-target="#addEmailToPersonModal"></button></h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>E-mail</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for email in person.emailaddress_set.all %}
+                        <tr>
+                            <td class="align-middle">{{ email.label }}</td>
+                            <td class="align-middle"><a href="mailto:{{ email.email }}">{{ email.email }}</a></td>
+                            <td>
+                                <button type="button" class="btn bi-pencil btn-email-edit" data-bs-toggle="modal" data-bs-target="#updateEmailForPersonModal_{{ email.id }}"></button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deleteEmailForPersonModal_{{ email.id }}"></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h4>Phone Numbers<button type="button" class="btn bi-plus-lg" data-bs-toggle="modal" data-bs-target="#addPhoneToPersonModal"></button></h4>
+                <table class="table">
+                    <tr>
+                        <th>Type</th>
+                        <th>Number</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    {% for phone in person.phonenumber_set.all %}
+                    <tr>
+                        <td class="align-middle">{{ phone.label }}</td>
+                        <td class="align-middle"><a href="tel:{{ phone.number }}">{{ phone.number }}</a></td>
+                        <td>
+                            <button type="button" class="btn bi-pencil btn-phone-edit" data-bs-toggle="modal" data-bs-target="#updatePhoneForPersonModal_{{ phone.id }}"></button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deletePhoneForPersonModal_{{ phone.id }}"></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="row">
+                <div class="col">
+                    <h4>Physical Addresses<button type="button" class="btn bi-plus-lg" data-bs-toggle="modal" data-bs-target="#addAddressToPersonModal"></button></h4>
+                </div>
+            </div>
+            <div class="row align-items-start">
+                {% if person.address_set.all|length %}
+                {% for address in person.address_set.all %}
+                <div class="col-auto">
+                    <b>{{ address.label }}</b><br>
+                    {{ address.street1 }}<br>
+                    {% if address.street2 %}{{ address.street2 }}<br>{% endif %}
+                    {{ address.city }}, {{ address.state }} {{ address.postal_code }}
+                    {% if address.country %}<br>{{ address.country }}{% endif %}
+                </div>
+                <div class="col-auto ">
+                    <button type="button" class="btn bi-pencil" data-bs-toggle="modal" data-bs-target="#updateAddressForPersonModal_{{ address.id }}"></button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deleteAddressForPersonModal_{{ address.id }}"></button>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="col">
+                    <p>No addresses found</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h3>{{ person.first_name }}'s networks<button type="button" class="btn bi-plus-lg" data-bs-toggle="modal" data-bs-target="#addToNetworkModal"></button></h3>
+        </div>
+    </div>
+    <div class="row">
+        {% if person.network_set.all|length %}
+        {% for network in person.network_set.all %}
+        <div class="col-auto">
+            <div class="row align-items-start justify-content-center">
+                <div class="col-auto">
+                    <a href="{% url 'network_profile' network.id %}">
+                    <img src="{{ network.image.url }}" width="64px"/>
+                    </a>
+                </div>
+            </div>
+            <div class="row align-items-start justify-content-center">
+                <div class="col-auto">
+                    <a href="{% url 'network_profile' network.id %}">{{ network.name }}</a>
+                </div>
+            </div>
+            <div class="row align-items-start justify-content-center">
+                <div class="col-auto">
+                    <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deletePersonFromNetworkModal_{{ person.id }}"></button>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-auto">
+            <p>{{ person.first_name }} is not yet part of any networks</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row align-items-start">
+        <div class="col">
+            <h3>{{ person.first_name }}'s connections<button type="button" class="btn bi-plus-lg" data-bs-toggle="modal" data-bs-target="#addConnectionModal"></button></h3>
+        </div>
+    </div>
+    <div class="row align-items-start">
+        {% if connections|length %}
+        {% for connection in connections %}
+        {% include "persons/utils/connection_card.html" with person=person connection=connection show_delete_button=True%}
+        {% endfor %}
+        {% else %}
+        <div class="col">
+            <p>{{ person.first_name }} does not yet have any connections</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="modal fade" id="updatePersonDetailsModal" tabindex="-1" aria-labelledby="updatePersonDetails" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="updatePersonDetails">Update details for {{ person.first_name }}{% if person.last_name %} {{ person.last_name }}{% endif %}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'person_profile' person.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row mb-3 align-items-end">
+                <div class="col-auto">
+                    <img src="{{ person.image.url }}" width="120px"/>
+                </div>
+                <div class="col-auto">
+                {{ upload_image_form.image}}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ upload_image_form.first_name }}
+            </div>
+            <div class="mb-3">
+                {{ upload_image_form.last_name }}
+            </div>
+            <div class="mb-3">
+                {{ upload_image_form.birthday }}
+            </div>
+            <div class="mb-3">
+                {{ upload_image_form.pronouns }}
+            </div>
+            <div class="mb-3">
+                {{ upload_image_form.gender }}
+            </div>
+            <div class="mb-3">
+                {{ upload_image_form.notes }}
+            </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addEmailToPersonModal" tabindex="-1" aria-labelledby="addEmailToPerson" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addEmailToPerson">Add email for {{ person.first_name }} {{ person.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_email_to_person' person.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <select class="form-select" id="email_label" name="email_label" aria-label="E-mail address label" required>
+                <option selected disabled value="">Select a label</option>
+                {% for label in valid_email_labels %}
+                <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter an e-mail address" required>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add email</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for email in person.emailaddress_set.all %}
+{% include "persons/utils/update_email_modal.html" with person=person email=email valid_email_labels=valid_email_labels %}
+{% include "persons/utils/delete_email_confirmation_modal.html" with person=person email=email %}
+{% endfor %}
+
+{% for phone in person.phonenumber_set.all %}
+{% include "persons/utils/update_phone_modal.html" with person=person phone=phone valid_phone_labels=valid_phone_labels %}
+{% include "persons/utils/delete_phone_confirmation_modal.html" with person=person phone=phone %}
+{% endfor %}
+
+<div class="modal fade" id="addPhoneToPersonModal" tabindex="-1" aria-labelledby="addPhoneToPerson" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addPhoneToPerson">Add phone number for {{ person.first_name }} {{ person.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_phone_number_to_person' person.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <select class="form-select" id="phone_label" name="phone_label" aria-label="Phone number label" required>
+                <option selected disabled value="">Select a label</option>
+                {% for label in valid_phone_labels %}
+                <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Enter a phone number" required>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add phone number</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addAddressToPersonModal" tabindex="-1" aria-labelledby="addAddressToPerson" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addAddressToPerson">Add address for {{ person.first_name }} {{ person.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_address_to_person' person.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input type="text" class="form-control" id="address_name" name="address_name" placeholder="Enter a brief description" aria-label="Address label">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="street1" name="street1" placeholder="Street address 1 (required)">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="street2" name="street2" placeholder="Street address 2 (optional)">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="city" name="city" placeholder="City">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="state" name="state" placeholder="State">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Postal Code">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="country" name="country" placeholder="Country">
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add address</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for address in person.address_set.all %}
+{% include "persons/utils/update_address_modal.html" with person_id=person.id person_first_name=person.first_name person_last_name=person.last_name address_id=address.id address_label=address.label street1=address.street1 street2=address.street2 city=address.city state=address.state postal_code=address.postal_code country=address.country %}
+{% include "persons/utils/delete_address_confirmation_modal.html" with person=person address=address %}
+{% endfor %}
+
+<div class="modal fade" id="addConnectionModal" tabindex="-1" aria-labelledby="addConnection" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addConnection">Add connection for {{ person.first_name }} {{ person.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_connection_to_person' person.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <select class="form-select" id="from_relationship_id" name="from_relationship_id" aria-label="From Relationship" required>
+                <option value="" selected disabled>Choose {{ person.first_name }}'s relationship</option>
+                {% for relationship in relationships %}
+                <option value="{{ relationship.id }}">{{ relationship.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <select class="form-select" id="to_person_id" name="to_person_id" aria-label="To person" required>
+                <option value="" selected disabled>Select a person</option>
+                {% for p in people %}
+                {% if person.id != p.id %}
+                <option value="{{ p.id }}">{{ p.first_name }} {{ p.last_name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+            <div class="mb-3">
+            <select class="form-select" id="to_relationship_id" name="to_relationship_id" aria-label="To Relationship" required>
+                <option value="" selected disabled>Choose this person's relationship to {{ person.first_name }}</option>
+                {% for relationship in relationships %}
+                <option value="{{ relationship.id }}">{{ relationship.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add connection</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addToNetworkModal" tabindex="-1" aria-labelledby="addToNetwork" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addToNetwork">Add {{ person.first_name }} {{ person.last_name }} to another network</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_person_to_network_by_person_id' person.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <select class="form-select" id="network_id" name="network_id" aria-label="Network ID" required>
+                <option value="" selected disabled>Select a network</option>
+                {% for network in networks %}
+                <option value="{{ network.id }}">{{ network.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add to network</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for network in person.network_set.all %}
+{% include "networks/utils/delete_person_from_network_confirmation_modal.html" with network=network person=person %}
+{% endfor %}
+
+<div class="modal fade" id="addTagsModal" tabindex="-1" aria-labelledby="addTags" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addTags">Add tags to {{ person.first_name }} {{ person.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'set_tags_on_person' person.id %}" method="post" id="tagForm">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-auto">
+                    <table data-toggle="table">
+                        <thead>
+                            <th></th>
+                            <th>Name</th>
+                        </thead>
+                        <tbody>
+                            {% for tag in user_tags %}
+                            <tr>
+                                <td><input class="form-check-input" type="checkbox" id="tag_{{ tag.id}}" name="tag_{{ tag.id}}" value="{{ tag.id }}" form="tagForm" aria-labelledby="addTags" {% if tag.id in tags_on_person %}checked{% endif %}></td>
+                                <td>{{ tag.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add tags</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block endscripts %}
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.js"></script>
+{% endblock %}

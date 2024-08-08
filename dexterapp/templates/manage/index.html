@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Manage - Dexter{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div>{{ error_message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <h2>Manage Tags and Relationships</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>My Tags</h3>
+            <form class="row row-cols-lg-auto align-items-center" action="{% url 'create_tag' %}" method="post">
+                {% csrf_token %}
+                <div class="col-12">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Enter a tag name" id="tag_name" name="tag_name" aria-label="Tag Name" required>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Add Tag</button>
+                </div>
+            </form>
+            <table class="table">
+            <tr>
+                <th>Tag</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            {% for tag in tags %}
+            <tr>
+                <td class="align-middle"><a href="{% url 'search_by_tag' %}?tag_ids={{ tag.id | urlencode }}">{{ tag.name }}</a></td>
+                <td class="align-middle">
+                    <button type="button" class="btn bi-pencil" data-bs-toggle="modal" data-bs-target="#updateTagModal_{{ tag.id }}"></button>
+                </td>
+                <td class="align-middle">
+                    <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deleteTagModal_{{ tag.id }}"></button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+         <div class="col">
+            <h3>My Relationships</h3>
+             <form class="row row-cols-lg-auto align-items-center" action="{% url 'create_relationship' %}" method="post">
+                {% csrf_token %}
+                <div class="col-12">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter a relationship name" id="relationship_name" name="relationship_name" aria-label="Relationship Name" required>
+                </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Add Tag</button>
+                </div>
+            </form>
+            <table class="table">
+            <tr>
+                <th>Name</th>
+                <td>Edit</td>
+                <th>Delete</th>
+            </tr>
+            {% for relationship in relationships %}
+            <tr>
+                <td class="align-middle">{{ relationship.name }}</td>
+                <td class="align-middle">
+                    <button type="button" class="btn bi-pencil" data-bs-toggle="modal" data-bs-target="#updateRelationshipModal_{{ relationship.id }}"></button>
+                </td>
+                <td class="align-middle">
+                    <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deleteRelationshipModal_{{ relationship.id }}"></button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+    </div>
+</div>
+
+{% for tag in tags %}
+{% include "manage/utils/update_tag_modal.html" with tag=tag %}
+{% include "manage/utils/delete_tag_confirmation_modal.html" with tag=tag %}
+{% endfor %}
+
+{% for relationship in relationships %}
+{% include "manage/utils/update_relationship_modal.html" with relationship=relationship %}
+{% include "manage/utils/delete_relationship_confirmation_modal.html" with relationship=relationship %}
+{% endfor %}
+
+{% endblock %}

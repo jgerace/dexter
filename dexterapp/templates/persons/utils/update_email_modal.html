@@ -1,0 +1,30 @@
+<div class="modal fade" id="updateEmailForPersonModal_{{ email.id }}" tabindex="-1" aria-labelledby="updateEmailForPerson_{{ email.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="updateEmailForPerson_{{ email.id }}">Update email for {{ person.first_name }} {{ person.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'update_email_for_person' person.id email.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <select class="form-select" id="update_email_label_{{ email.id }}" name="update_email_label_{{ email.id }}" aria-label="E-mail address label" required>
+                <option disabled value="">Select a label</option>
+                {% for label in valid_email_labels %}
+                <option {% if email_label == label %}selected{% endif %} value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <input type="email" class="form-control" id="update_email_{{ email.id }}" name="update_email_{{ email.id }}" placeholder="Enter an e-mail address" value="{{ email.email }}" required>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update email</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

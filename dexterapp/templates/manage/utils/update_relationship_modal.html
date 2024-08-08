@@ -1,0 +1,22 @@
+<div class="modal fade" id="updateRelationshipModal_{{ relationship.id }}" tabindex="-1" aria-labelledby="updateRelationship_{{ relationship.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="updateRelationship_{{ relationship.id }}">Update tag {{ relationship.name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'update_relationship' relationship.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input type="text" class="form-control" id="update_relationship_name_{{ relationship.id }}" name="update_relationship_name_{{ relationship.id }}" placeholder="Enter a relationship name" value="{{ relationship.name }}" aria-label="Relationship name" required>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update relationship</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

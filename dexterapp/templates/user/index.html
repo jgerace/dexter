@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Dexter{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div>{{ error_message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <img src="{{ user.image.url }}" width="120px"/>
+        </div>
+        <div class="col-auto">
+            <h1>{{ user.first_name }} {{ user.last_name }}<button class="btn bi-pencil" data-bs-toggle="modal" data-bs-target="#updateUserDetailsModal"></button></h1>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="row mb-3">
+                <label for="username_display" class="col-2 col-form-label">Username</label>
+                <div class="col-auto">
+                    <input readonly type="text" class="form-control-plaintext" id="username_display" name="username_display" value="{{ user.username }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="email_display" class="col-2 col-form-label">E-mail address</label>
+                <div class="col-auto">
+                    <input readonly type="text" class="form-control-plaintext" id="email_display" name="email_display" value="{{ user.email }}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <a href="{% url 'password_change' %}">Change your password</a>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateUserDetailsModal" tabindex="-1" aria-labelledby="updateUserDetails" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="updateUserDetails">Update details for {{ user.first_name }} {{ user.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row mb-3 align-items-end">
+                <div class="col-auto">
+                    <img src="{{ user.image.url }}" width="120px"/>
+                </div>
+                <div class="col-auto">
+                {{ profile_update_form.image}}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ profile_update_form.first_name }}
+            </div>
+            <div class="mb-3">
+                {{ profile_update_form.last_name }}
+            </div>
+            <div class="mb-3">
+                {{ profile_update_form.username }}
+            </div>
+            <div class="mb-3">
+                {{ profile_update_form.email }}
+            </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

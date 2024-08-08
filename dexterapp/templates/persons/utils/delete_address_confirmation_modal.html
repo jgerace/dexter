@@ -1,0 +1,31 @@
+<div class="modal fade" id="deleteAddressForPersonModal_{{ address.id }}" tabindex="-1" aria-labelledby="deleteAddressForPerson_{{ address.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteAddressForPerson_{{ address.id }}">Delete address for {{ person.first_name }} {{ person.last_name }}?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'delete_address_for_person' person.id address.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <p>Are you sure you want to delete the following address?</p>
+        </div>
+        <div class="mb-3">
+            <div class="col-auto">
+                <b>{{ address.label }}</b><br>
+                {{ address.street1 }}<br>
+                {% if address.street2 %}{{ address.street2 }}<br>{% endif %}
+                {{ address.city }}, {{ address.state }} {{ address.postal_code }}
+                {% if address.country %}<br>{{ address.country }}{% endif %}
+            </div>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Delete address</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
