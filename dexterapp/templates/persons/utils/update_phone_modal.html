@@ -1,0 +1,30 @@
+<div class="modal fade" id="updatePhoneForPersonModal_{{ phone.id }}" tabindex="-1" aria-labelledby="updatePhoneForPerson_{{ phone.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="updatePhoneForPerson_{{ phone.id }}">Update phone number for {{ person.first_name }} {{ person.last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'update_phone_number_for_person' person.id phone.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <select class="form-select" id="update_phone_label_{{ phone.id }}" name="update_phone_label_{{ phone.id }}" aria-label="Phone number label" required>
+                <option disabled value="">Select a label</option>
+                {% for label in valid_phone_labels %}
+                <option {% if phone.label == label %}selected{% endif %} value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <input type="tel" class="form-control" id="update_phone_number_{{ phone.id }}" name="update_phone_number_{{ phone.id }}" placeholder="Enter a phone number" value="{{ phone.number }}" required>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update phone number</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

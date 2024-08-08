@@ -1,0 +1,23 @@
+<div class="modal fade" id="deleteTagModal_{{ tag.id }}" tabindex="-1" aria-labelledby="deleteTag_{{ tag.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteTag_{{ tag.id }}">Delete tag {{ tag.name }}?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'delete_tag' tag.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <p>Are you sure you want to delete the tag <b>{{ tag.name }}</b>?</p>
+            <p>This action will remove this tag from all people currently associated with it.</p>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Delete tag</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="modal fade" id="updateAddressForPersonModal_{{ address_id }}" tabindex="-1" aria-labelledby="updateAddressForPerson_{{ address_id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="updateAddressForPerson_{{ address_id }}">Update address for {{ person_first_name }} {{ person_last_name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'update_address_for_person' person_id address_id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input type="text" class="form-control" id="address_name_{{ address_id }}" name="address_name_{{ address_id }}" placeholder="Enter a brief description" value="{{ address_label }}" aria-label="Address label">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="street1_{{ address_id }}" name="street1_{{ address_id }}" placeholder="Street address 1" value="{{ street1 }}">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="street2_{{ address_id }}" name="street2_{{ address_id }}" placeholder="Street address 2" value="{{ street2 }}">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="city_{{ address_id }}" name="city_{{ address_id }}" placeholder="City" value="{{ city }}">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="state_{{ address_id }}" name="state_{{ address_id }}" placeholder="State" value="{{ state }}">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="postal_code_{{ address_id }}" name="postal_code_{{ address_id }}" placeholder="Postal Code" value="{{ postal_code }}">
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="country_{{ address_id }}" name="country_{{ address_id }}" placeholder="Country" value="{{ country }}">
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add address</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="modal fade" id="deleteEmailForPersonModal_{{ email.id }}" tabindex="-1" aria-labelledby="deleteEmailForPerson_{{ email.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteEmailForPerson_{{ email.id }}">Delete email for {{ person.first_name }} {{ person.last_name }}?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'delete_email_for_person' person.id email.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <p>Are you sure you want to delete the following email?</p>
+        </div>
+        <div class="row mb-3">
+            <label for="email_{{ email.id }}" class="col-2 col-form-label">{{ email.label }}</label>
+            <div class="col-auto">
+                <input readonly type="email" id="email_{{ email.id }}" class="form-control-plaintext" value="{{ email.email }}">
+            </div>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Delete email</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

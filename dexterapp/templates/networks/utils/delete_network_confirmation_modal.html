@@ -1,0 +1,23 @@
+<div class="modal fade" id="deleteNetworkModal_{{ network.id }}" tabindex="-1" aria-labelledby="deleteNetwork_{{ network.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteNetwork_{{ network.id }}">Delete network {{ network.name }}?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'delete_network' network.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <p>Are you sure you want to delete the network <b>{{ network.name }}</b>?</p>
+            <p>This action will remove this network from all people currently associated with it.</p>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Delete network</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

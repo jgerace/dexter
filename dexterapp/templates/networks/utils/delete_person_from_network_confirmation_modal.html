@@ -1,0 +1,22 @@
+<div class="modal fade" id="deletePersonFromNetworkModal_{{ person.id }}" tabindex="-1" aria-labelledby="deletePersonFromNetwork_{{ person.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deletePersonFromNetwork_{{ person.id }}">Delete {{ person.first_name }} {{ person.last_name }} from network {{ network.name }}?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'delete_person_from_network' network.id person.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <p>Are you sure you want to remove {{ person.first_name }} {{ person.last_name }} from network {{ network.name }}?</p>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Remove person from network</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

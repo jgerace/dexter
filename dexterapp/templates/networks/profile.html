@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Network - {{ network.name }} - Dexter{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div>{{ error_message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <img src="{{ network.image.url }}" width="120px"/>
+        </div>
+        <div class="col-auto">
+            <h1>{{ network.name }}<button class="btn bi-pencil" data-bs-toggle="modal" data-bs-target="#updateNetworkModal"></button></h1>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-auto">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPersonToNetworkModal">
+              Add someone to this network
+            </button>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Person Name</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for person in network.people.all %}
+                    <tr>
+                        <td class="align-middle"><a href="{% url 'person_profile' person.id %}"><img src="{{ person.image.url }}" width="32px"/></a></td>
+                        <td class="align-middle"><a href="{% url 'person_profile' person.id %}">{{ person.first_name}} {{ person.last_name }}</a></td>
+                        <td class="align-middle"><button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deletePersonFromNetworkModal_{{ person.id }}"></button></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateNetworkModal" tabindex="-1" aria-labelledby="updateNetwork" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="updateNetwork">Update details for {{ network.name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'network_profile' network.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+
+            </div>
+            <div class="row mb-3 align-items-end">
+                <div class="col-auto">
+                    <img src="{{ network.image.url }}" width="120px"/>
+                </div>
+                <div class="col-auto">
+                    {{ update_form.image}}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ update_form.name }}
+            </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addPersonToNetworkModal" tabindex="-1" aria-labelledby="addPersonToNetwork" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addPersonToNetwork">Add someone to {{ network.name }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'add_person_to_network' network.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <div class="col-auto">
+                <select class="form-select" id="person_id" name="person_id" aria-label="Default select example" required>
+                    <option value="" selected disabled>Select a person</option>
+                    {% for person in people %}
+                    <option value="{{ person.id }}">{{ person.first_name }} {{ person.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add person</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for person in network.people.all %}
+{% include "networks/utils/delete_person_from_network_confirmation_modal.html" with network=network person=person %}
+{% endfor %}
+
+{% endblock %}

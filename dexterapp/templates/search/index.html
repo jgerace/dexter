@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Search - Dexter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Search by tags</h2>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            {% for tag in tags %}
+            <span class="badge rounded-pill text-bg-secondary">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+    </div>
+     <div class="row mb-3 align-items-start">
+        <div class="col">
+            <h3>Results</h3>
+        </div>
+    </div>
+    <div class="row mb-3 align-items-start">
+        <div class="col">
+        {% if not person_tags|length %}
+            <div class="row mb-3 align-items-start">
+                <p>No people found with this tag</p>
+            </div>
+        {% else %}
+        {% for pt in person_tags %}
+            <div class="row mb-3 align-items-center">
+                <div class="col-auto">
+                    <a href="{% url 'person_profile' pt.person.id %}"><img src="{{ pt.person.image.url }}" width="32px"/></a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'person_profile' pt.person.id %}">{{ pt.person.first_name }} {{ pt.person.last_name }}</a>
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

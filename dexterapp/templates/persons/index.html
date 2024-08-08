@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}My People - Dexter{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if error_message %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div>{{ error_message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <h2>My People</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPersonModal">
+          Add a new person
+        </button>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <table class="table">
+                <tr>
+                    <th>Person Name</th>
+                    <th>Delete</th>
+                </tr>
+                {% for person in people %}
+                <tr>
+                    <td class="align-middle"><a href="{% url 'person_profile' person.id %}">{{ person.first_name}} {{ person.last_name }}</a></td>
+                    <td>
+                        <form action="{% url 'delete_person' %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" id="person_id" name="person_id" value="{{ person.id }}" hidden="true">
+                            <button type="submit" class="btn bi-trash"></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPersonModal" tabindex="-1" aria-labelledby="addPerson" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addPerson">Add a new person</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'create_person' %}" method="post">
+            {% csrf_token %}
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="first_name" name="first_name">
+                <label for="first_name">First Name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="last_name" name="last_name">
+                <label for="last_name">Last Name</label>
+            </div>
+            <div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Create Person">
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-3 text-center justify-content-center">
+    <div class="col-auto">
+      <h1>Meet Dexter!</h1>
+      <p>The assistant who helps you remember the people you meet</p>
+    </div>
+  </div>
+  {% if form.errors %}
+  <div class="row mb-3 justify-content-center">
+    <div class="col-auto">
+      <div class="alert alert-danger alert-dismissible" role="alert">
+          <div>Your username and password didn't match. Please try again.</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if next %}
+  <div class="row mb-3 justify-content-center">
+    <div class="col-auto">
+      {% if user.is_authenticated %}
+        Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.
+      {% else %}
+        Please login to see this page.
+      {% endif %}
+      </div>
+  </div>
+  {% endif %}
+
+  <div class="row mb-3 justify-content-center">
+      <div class="col-auto">
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <div class="row mb-3 justify-content-center">
+            <div class="col-auto">
+              <table class="table">
+                <tr>
+                  <td class="align-middle">{{ form.username.label_tag }}</td>
+                  <td class="align-middle">{{ form.username }}</td>
+                </tr>
+                <tr>
+                  <td class="align-middle">{{ form.password.label_tag }}</td>
+                  <td class="align-middle">{{ form.password }}</td>
+                </tr>
+              </table>
+              </div>
+            </div>
+          <div class="row mb-3 align-items-center justify-content-center">
+            <div class="col-auto">
+              <input type="submit" class="btn btn-primary" value="Login">
+            </div>
+            <div class="col-auto">
+              <input type="hidden" name="next" value="{{ next }}">
+          {# Assumes you set up the password_reset view in your URLconf #}
+          <a href="{% url 'password_reset' %}">Forgot password?</a>
+              </div>
+          </div>
+        </form>
+      </div>
+  </div>
+  <div class="row mb-3 justify-content-center">
+    <div class="col-auto">
+      <a href="{% url 'register' %}">Create a new user</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

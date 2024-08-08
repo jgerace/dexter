@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}My Networks - Dexter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <h2>My Networks</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+        <form class="row row-cols-lg-auto align-items-center" action="{% url 'create_network' %}" method="post">
+            {% csrf_token %}
+            <div class="col-12">
+            <div class="input-group">
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter a network name" aria-label="Network Name" required>
+            </div>
+            </div>
+            <div class="col-12">
+                <input type="submit" class="btn btn-primary" value="Create Network">
+            </div>
+        </form>
+        </div>
+    </div>
+    <div class="row align-items-start">
+        <div class="col-auto">
+            <table class="table">
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Delete</th>
+                </tr>
+                {% for network in user.network_set.all %}
+                <tr>
+                    <td class="align-middle"><a href="{% url 'network_profile' network.id %}"><img src="{{ network.image.url }}" width="32px"/></a></td>
+                    <td class="align-middle"><a href="{% url 'network_profile' network.id %}">{{ network.name}}</a></td>
+                    <td class="align-middle">
+                        <button type="button" class="btn bi-trash" data-bs-toggle="modal" data-bs-target="#deleteNetworkModal_{{ network.id }}"></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% for network in user.network_set.all %}
+{% include "networks/utils/delete_network_confirmation_modal.html" with network=network %}
+{% endfor %}
+
+{% endblock %}
