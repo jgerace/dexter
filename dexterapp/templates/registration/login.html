@@ -5,6 +5,8 @@
   <div class="row mb-3 text-center justify-content-center">
     <div class="col-auto">
       <h1>Meet Dexter!</h1>
+      {% load static %}
+      <img src="{% static 'dexter_logo.png' %}" width="256px" alt="Dexter">
       <p>The assistant who helps you remember the people you meet</p>
     </div>
   </div>
@@ -26,7 +28,7 @@
         Your account doesn't have access to this page. To proceed,
         please login with an account that has access.
       {% else %}
-        Please login to see this page.
+        Please login to get started.
       {% endif %}
       </div>
   </div>
