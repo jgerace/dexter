@@ -69,7 +69,6 @@ class UpdateUserForm(forms.ModelForm):
                                                          "placeholder": "Enter username"})
         self.fields.get("email").widget.attrs.update({"class": "form-control",
                                                        "placeholder": "Enter email address"})
-        print(self.fields)
 
 
 class UserProfileView(BaseView):
