@@ -23,7 +23,7 @@ class Network(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    image = models.ImageField(null=True, upload_to="network/", default="/network/default.jpg")
+    image = models.ImageField(null=True, upload_to="network/", default="/network/default.png")
     people = models.ManyToManyField("Person")
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -57,7 +57,7 @@ class User(AbstractUser):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     birthday = models.DateField(default=None, null=True)
-    image = models.ImageField(null=True, upload_to="user/", default="/user/default.jpg")
+    image = models.ImageField(null=True, upload_to="user/", default="/user/default.png")
     created_at = models.DateTimeField(default=timezone.now)
 
 
@@ -70,7 +70,7 @@ class Person(models.Model):
     pronouns = models.CharField(max_length=100, blank=True, null=True)
     gender = models.CharField(max_length=100, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    image = models.ImageField(null=True, upload_to="person/", default="/person/default.jpg")
+    image = models.ImageField(null=True, upload_to="person/", default="/person/default.png")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(default=timezone.now)
 

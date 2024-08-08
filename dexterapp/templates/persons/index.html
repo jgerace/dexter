@@ -55,13 +55,11 @@
       <div class="modal-body">
         <form action="{% url 'create_person' %}" method="post">
             {% csrf_token %}
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="first_name" name="first_name">
-                <label for="first_name">First Name</label>
+            <div class="mb-3">
+                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter a first name" required>
             </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="last_name" name="last_name">
-                <label for="last_name">Last Name</label>
+            <div class="mb-3">
+                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter a last name">
             </div>
             <div>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
