@@ -1,3 +1,5 @@
+![Test suite](https://github.com/jgerace/dexter/actions/workflows/tests.yml/badge.svg)
+
 # Dexter
 
 An app to help you remember the people you meet.
